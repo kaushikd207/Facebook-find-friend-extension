@@ -1,0 +1,6 @@
+.container {
+  min-width: 400px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
