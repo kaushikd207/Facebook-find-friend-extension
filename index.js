@@ -1,29 +1,33 @@
-let friendButton = document.getElementById("friendBtn");
-let container = document.getElementsByClassName("container");
-friendButton.addEventListener("click", async () => {
-  //get the current active tab
-  let [tab] = await chrome.tabs.query({
-    active: true,
-    currentWindow: true,
-  });
-  // Execute script to parse friendList
-  chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    func: scrapFriendList,
-  });
-});
-
-// Function to scrap friendList
-
 function scrapFriendList() {
-  let PARSEDLIST = document.getElementsByClassName("xzsf02u");
-  let data = [];
-  for (let i = 23; i < PARSEDLIST.length; i++) {
-    data.push(PARSEDLIST[i].innerText);
+  const parentDiv = document.querySelector("div");
+  const textContent = parentDiv.textContent.trim();
+
+  let names = [];
+  let regex = /([A-Z][a-z]+)\s([A-Z][a-z]+)/g;
+
+  let matches = textContent.match(regex);
+
+  if (matches) {
+    names = Array.from(new Set(matches));
   }
-  if (data == null || data.length == 0) {
-    alert("No Friend Found");
+  if (names.length > 0) {
+    alert("Friend List:\n" + names.join("\n"));
   } else {
-    alert(data);
+    alert("No Friends Found");
   }
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  const friendButton = document.getElementById("friendBtn");
+
+  friendButton.addEventListener("click", async () => {
+    let [tab] = await chrome.tabs.query({
+      active: true,
+      currentWindow: true,
+    });
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      func: scrapFriendList,
+    });
+  });
+});
