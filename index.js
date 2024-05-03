@@ -1,20 +1,25 @@
 function scrapFriendList() {
-  const parentDiv = document.querySelector("div");
-  const textContent = parentDiv.textContent.trim();
+  const targetDivs = document.querySelectorAll(
+    'div[data-visualcompletion="ignore-dynamic"]'
+  );
 
-  let names = [];
-  let regex = /([A-Z][a-z]+)\s([A-Z][a-z]+)/g;
+  let friendName = [];
 
-  let matches = textContent.match(regex);
 
-  if (matches) {
-    names = Array.from(new Set(matches));
-  }
-  if (names.length > 0) {
-    alert("Friend List:\n" + names.join("\n"));
-  } else {
-    alert("No Friends Found");
-  }
+  targetDivs.forEach((div) => {
+    const anchorElements = document.querySelectorAll("a");
+    anchorElements.forEach((anchor) => {
+      const svgWithAriaLabel = anchor.querySelector("svg[aria-label]");
+      if (svgWithAriaLabel) {
+        const name = svgWithAriaLabel.getAttribute("aria-label").trim();
+        const profileLink = anchor.getAttribute("href");
+        friendName.push(name);
+        console.log("Name:", name);
+        console.log("Profile Link:", profileLink);
+      }
+    });
+  });
+  alert(friendName);
 }
 
 document.addEventListener("DOMContentLoaded", function () {
